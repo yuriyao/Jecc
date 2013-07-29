@@ -1,0 +1,45 @@
+//c语言文法
+//bit_ops: | ^ & 
+//simple_type: long float char unsigned byte
+//separate: ;
+
+[nonterminal] 
+Program Paramlist Paramlist' Funcstate Type
+Funcdef Typedef Realparam Realparam' Funccall
+Block Statement Logic If Ifelse For While
+Statements Block'  Expr Assign Struct Typedefs
+Return 
+
+[terminal]
++ - * /  simple_type number 
+( ) { }  main seperate token extern int 
+ldquota rdquota string 
+struct void , = if else for while return
+
+[start]
+S' 
+
+[production]
+	S' =>  Program ; //整个程序
+	Program => int main ( ) Block | Funcdef Program | Funcstate Program | Struct Program;//整个程序
+	Paramlist => void | Paramlist' ; //参数列表
+	Paramlist' => Type token | Paramlist' , Type token ;
+	Funcstate => extern Type token ( Paramlist ) seperate; //函数申明
+	Type => simple_type | int | Type * | void | struct token ;//类型
+	Funcdef => Type token ( Paramlist ) Block ; //函数定义
+	Typedef => Type token seperate | Type token = token seperate | Type token = number seperate | Type token = Funccall seperate ;//变量定义
+	Assign => token = Funccall | token = Expr | token = ldquota string rdquota ;//赋值
+	Realparam => void | Realparam' ;//实参表
+	Realparam' => Expr | Realparam' , Expr ;
+	Funccall => token ( Realparam ); //函数调用
+	Block =>  { Block' } ;
+	Block' => Statement | Block' Statement | If | Block' If  | While | Block' While  |  For | Block' For | Ifelse | Block' Ifelse ; //程序块
+	Statement => Typedef | Funccall seperate | seperate  | Expr seperate | Assign seperate | Return seperate ; //表达式
+	If => if ( Expr ) Block ;//if表达式
+	Ifelse => If else Block ;//if else
+	While => while ( Expr ) Block ; //while
+	For => for ( Statement Statement Statement ) Block ;//for
+	Expr => number | token | ( Expr + Expr ) | ( Expr - Expr ) | ( Expr * Expr ) | ( Expr / Expr ) ; //表达式
+	Struct => struct token { Typedefs } seperate ;//结构体
+	Typedefs => Typedef | Typedefs Typedef ;
+	Return => return | return Expr ;
